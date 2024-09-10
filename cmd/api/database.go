@@ -8,7 +8,7 @@ import (
 )
 
 func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open("postgres", cfg.db.dsn)
+	db, err := sql.Open("pgx", cfg.db.dsn)
 	if err != nil {
 		return nil, err
 	}
