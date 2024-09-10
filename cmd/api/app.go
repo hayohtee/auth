@@ -10,5 +10,5 @@ import (
 type application struct {
 	config config
 	logger *slog.Logger
-	models data.UserModel
+	users  data.UserModel
 }
