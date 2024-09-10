@@ -4,9 +4,6 @@ package main
 type config struct {
 	// The network port the server is listening on.
 	port int
-	// The current operating environment for the application
-	// (development, staging, production, etc...)
-	env string
 
 	// Configurations for database.
 	db struct {
