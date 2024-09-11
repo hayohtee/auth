@@ -10,6 +10,7 @@ paths:
     post:
       summary: Create a new user
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -56,9 +57,8 @@ paths:
   /users/login:
     post:
       summary: Login a user
-      security:
-        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -77,6 +77,11 @@ paths:
       responses:
         200:
           description: User logged in successfully
+          headers:
+            Authorization:
+              description: JWT token returned as Bearer Token
+              schema:
+                type: string
           content:
             application/json:
               schema:
@@ -93,8 +98,8 @@ servers:
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: apiKey
-      name: Authorization
-      in: header
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
       description: Bearer authentication
