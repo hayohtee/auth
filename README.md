@@ -36,7 +36,7 @@ A demo REST API authentication and authorization using JWT in Go
  ```
 
 5. Set up environment variables:
-  Create enivronment variable for GREENLIGHT_DB_DSN
+  Create enivronment variable for TEST_DB_DSN
 
   ```bash
   export TEST_DB_DSN='postgres://test:yourpassword@localhost/test?sslmode=disable';
