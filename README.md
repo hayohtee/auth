@@ -7,8 +7,9 @@ A demo REST API authentication and authorization using JWT in Go
 1. Clone the repository:
 
   ```bash
-  git clone https://github.com/hayohtee/greenlight.git
-  cd greenlight
+  git@github.com:hayohtee/auth.git
+
+  cd auth
   ```
 2. Install dependencies:
 
