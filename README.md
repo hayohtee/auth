@@ -67,3 +67,6 @@ go run ./cmd/api
   ```bash
   go run ./cmd/api -help 
   ```
+
+## Endpoint
+[documentation](https://app.swaggerhub.com/apis-docs/OlamilekanAkintilebo/test/1.0.0)
