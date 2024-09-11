@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Test API
+  description: |
+    A demo REST API endpoint for Testing API Authentication and Authorization
+    using JWT
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the user
+                  example: John Doe
+                email:
+                  type: string
+                  format: email
+                  description: The email of the user
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  description: The password of the user
+                  example: john123
+      responses:
+        201:
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the user
+                    example: 1
+                  name:
+                    type: string
+                    description: The name of the user
+                    example: John Doe
+                  email:
+                    type: string
+                    description: The email of the user
+                    example: john@example.com
+                  created_at:
+                    type: string
+                    format: time
+                    description: The user account creation date
+  /users/login:
+    post:
+      summary: Login a user
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: The email of the user
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  description: The password of the user
+                  example: john123
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User logged in successfully
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/OlamilekanAkintilebo/test/1.0.0
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      description: Bearer authentication
