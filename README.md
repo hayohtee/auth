@@ -19,7 +19,7 @@ A demo REST API authentication and authorization using JWT in Go
    
 4. Create DATABASE test and ROLE test using PostgreSQL (psql)
 
-   ```bash
+```bash
    // First connect as postgres user
    psql -U postgres -d postgres
 
@@ -32,7 +32,8 @@ A demo REST API authentication and authorization using JWT in Go
    // You are now connected to database "test" as user "postgres".
    GRANT ALL ON SCHEMA public TO test;
    CREATE EXTENSION citext;
-   ```
+ ```
+
 5. Set up environment variables:
   Create enivronment variable for GREENLIGHT_DB_DSN
 
@@ -47,12 +48,19 @@ A demo REST API authentication and authorization using JWT in Go
   psql $TEST_DB_DSN
   \i 000001_create_user_table.down.sql
   ```
+7. Create .env file with the following contents
 
-7. Run the command
+```
+TEST_DB_DSN='postgres://test:yourpassword@localhost/test?sslmode=disable'
+JWT_SECRET='your secret'
+```
+
+8. Run the command
    
-  ```bash
-  go run ./cmd/api -db-dsn=$TEST_DB_DSN
-  ```
+```bash
+go run ./cmd/api
+```
+
   If you want to customize the default configurations, there is commandline flags option. Run the following
   to show the list of all commamdline options.
   
