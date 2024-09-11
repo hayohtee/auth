@@ -7,6 +7,7 @@ func (app *application) routes() http.Handler {
 
 	// Endpoints goes here
 	mux.HandleFunc("POST /users", app.createUserHandler)
+	mux.HandleFunc("POST /users/login", app.loginUserHandler)
 
 	return mux
 }
