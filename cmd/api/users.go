@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/hayohtee/auth/internal/data"
 	"github.com/hayohtee/auth/internal/validator"
 	"net/http"
-	"time"
 )
 
 func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -150,12 +150,7 @@ func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   token,
-		Expires: time.Now().Add(24 * time.Hour),
-	})
-
+	w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	w.WriteHeader(http.StatusOK)
 	message := map[string]string{
 		"message": "Login successful",
