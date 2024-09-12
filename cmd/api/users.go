@@ -166,7 +166,7 @@ func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	token, err := generateJWT(user.ID, user.Email)
+	token, err := generateJWT(user.ID, user.Role)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
