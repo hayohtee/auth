@@ -7,13 +7,6 @@ import (
 	"time"
 )
 
-const (
-	// RoleCustomer represents a customer role
-	RoleCustomer = "customer"
-	// RoleAdmin represents an admin role
-	RoleAdmin = "admin"
-)
-
 var (
 	// ErrDuplicateEmail is a custom error that is returned when there
 	// is a duplicate email in the database.
