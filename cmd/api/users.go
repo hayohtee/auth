@@ -25,7 +25,7 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 	user := data.User{
 		Name:  input.Name,
 		Email: input.Email,
-		Role:  data.RoleCustomer,
+		Role:  RoleCustomer,
 	}
 
 	err = user.Password.Set(input.Password)
