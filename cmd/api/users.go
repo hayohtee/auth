@@ -25,6 +25,7 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 	user := data.User{
 		Name:  input.Name,
 		Email: input.Email,
+		Role:  data.RoleCustomer,
 	}
 
 	err = user.Password.Set(input.Password)
@@ -71,7 +72,6 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 			w.Write(js)
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-
 		}
 		return
 	}
@@ -166,7 +166,7 @@ func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	token, err := generateJWT(user.ID, user.Name, user.Email)
+	token, err := generateJWT(user.ID, user.Email)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
