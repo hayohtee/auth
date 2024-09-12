@@ -186,3 +186,11 @@ func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
 }
+
+func (app *application) welcomeCustomerHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome customer"))
+}
+
+func (app *application) welcomeAdminHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome admin"))
+}
