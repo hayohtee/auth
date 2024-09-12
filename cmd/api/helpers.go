@@ -36,7 +36,7 @@ func generateJWT(userID int64, role string) (string, error) {
 func validateJWT(token string) (*claims, error) {
 	payload := claims{}
 
-	t, err := jwt.ParseWithClaims(token, payload, func(token *jwt.Token) (interface{}, error) {
+	t, err := jwt.ParseWithClaims(token, &payload, func(token *jwt.Token) (interface{}, error) {
 		return []byte(JWTSecret), nil
 	})
 
