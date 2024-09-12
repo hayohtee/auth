@@ -10,15 +10,14 @@ var (
 	JWTSecret = os.Getenv("JWT_SECRET")
 )
 
-func generateJWT(userID int64, name, email string) (string, error) {
+func generateJWT(userID int64, role string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss":     "http://localhost:4000",
 		"exp":     expirationTime.Unix(),
 		"iat":     time.Now().Unix(),
 		"user_id": userID,
-		"name":    name,
-		"email":   email,
+		"role":    role,
 	})
 
 	return token.SignedString([]byte(JWTSecret))
