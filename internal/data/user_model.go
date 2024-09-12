@@ -27,11 +27,11 @@ type UserModel struct {
 // Insert a new user record to the database.
 func (u UserModel) Insert(user *User) error {
 	query := `
-		INSERT INTO users(name, email, password_hash)
-		VALUES ($1, $2, $3)
+		INSERT INTO users(name, email, password_hash, role)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at`
 
-	args := []any{user.Name, user.Email, user.Password.hash}
+	args := []any{user.Name, user.Email, user.Password.hash, user.Role}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
