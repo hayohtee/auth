@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (app *application) authorize(role string, next http.Handler) http.Handler {
+func (app *application) authorize(role string, next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorizationHeader := r.Header.Get("Authorization")
 		data := strings.Split(authorizationHeader, " ")
