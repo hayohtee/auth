@@ -25,3 +25,8 @@ migrate-down:
 migrate-drop:
 	@echo "Dropping all tables"
 	@migrate -path ${MIGRATIONS_PATH} -database ${DATABASE_DSN} drop
+
+.PHONY: run
+run:
+	@echo "Starting the server"
+	@go run ./cmd/api
