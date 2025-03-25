@@ -24,6 +24,14 @@ func main() {
 	var cfg config
 	flag.IntVar(&cfg.port, "port", 4000, "The port to start the server on")
 	flag.StringVar(&cfg.dsn, "dsn", os.Getenv("DATABASE_DSN"), "The database DSN")
+	
+	logger.Info("opening database connection")
+	db, err := openDB(cfg.dsn)
+	if err != nil {
+		logger.Error("failed to open database connection", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+	defer db.Close()
 
 }
 
