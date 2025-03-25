@@ -5,6 +5,9 @@ type application struct {
 }
 
 type config struct {
-	port int
-	dsn  string
+	port  int
+	dsn   string
+	oauth struct {
+		googleClientID string
+	}
 }
