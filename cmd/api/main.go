@@ -35,6 +35,12 @@ func main() {
 	}
 	defer db.Close()
 
+	cfg.oauth.googleClientID = os.Getenv("GOOGLE_CLIENT_ID")
+	if cfg.oauth.googleClientID == "" {
+		logger.Error("the client id for google oauth is not provided")
+		os.Exit(1)
+	}
+
 	app := application{
 		config: cfg,
 	}
