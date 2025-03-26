@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hayohtee/auth/internal/data"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
 )
@@ -41,8 +42,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	cfg.oauth.googleClientSecret = os.Getenv("GOOGLE_CLIENT_SECRET")
+	if cfg.oauth.googleClientSecret == "" {
+		logger.Error("the client id for google oauth is not provided")
+		os.Exit(1)
+	}
+
 	app := application{
-		config: cfg,
+		config:          cfg,
+		stateTokenModel: data.NewStateTokenModel(db),
 	}
 
 	logger.Info("starting server", slog.String("addr", fmt.Sprintf(":%d", cfg.port)))
