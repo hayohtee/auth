@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS users(
     password bytea,
     email_verified bool NOT NULL,
     avatar_url text,
-    created_at timestamp(0) with time zone NOT NULL DEFAULT now(),
+    created_at timestamp(0) with time zone NOT NULL DEFAULT now()
 );
