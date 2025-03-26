@@ -35,14 +35,14 @@ func (u UserModel) Insert(user *User) error {
 
 func (u UserModel) InsertForAuthProvider(user *UserWithAuthProvider) error {
 	query := `
-		INSERT INTO users(name, email, email_verified, password_hash, avatar_url)
-		VALUES($1, $2, $3, $4, $5)
+		INSERT INTO users(name, email, email_verified, avatar_url)
+		VALUES($1, $2, $3, $4)
 		RETURNING id, created_at`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	args := []any{user.User.Name, user.User.Email, user.User.EmailVerified, user.User.Password.Hash, user.User.AvatarURL}
+	args := []any{user.User.Name, user.User.Email, user.User.EmailVerified, user.User.AvatarURL}
 	if err := u.db.QueryRowContext(ctx, query, args...).Scan(&user.User.ID, &user.User.CreatedAt); err != nil {
 		return err
 	}
