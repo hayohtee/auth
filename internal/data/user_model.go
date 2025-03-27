@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -33,25 +34,34 @@ func (u UserModel) Insert(user *User) error {
 	return nil
 }
 
-func (u UserModel) InsertForAuthProvider(user *UserWithAuthProvider) error {
+func (u UserModel) GetByEmail(email string) (User, error) {
 	query := `
-		INSERT INTO users(name, email, email_verified, avatar_url)
-		VALUES($1, $2, $3, $4)
-		RETURNING id, created_at`
+		SELECT id, name, email, email_verified, password_hash, avatar_url, created_at
+		FROM users
+		WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	args := []any{user.User.Name, user.User.Email, user.User.EmailVerified, user.User.AvatarURL}
-	if err := u.db.QueryRowContext(ctx, query, args...).Scan(&user.User.ID, &user.User.CreatedAt); err != nil {
-		return err
+	var user User
+	err := u.db.QueryRowContext(ctx, query, email).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.EmailVerified,
+		&user.Password.Hash,
+		&user.AvatarURL,
+		&user.AvatarURL,
+		&user.CreatedAt,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return User{}, ErrRecordNotFound
+		default:
+			return User{}, err
+		}
 	}
-
-	query = `
-		INSERT INTO user_auth_providers(user_id, provider, provider_id)
-		VALUES($1, $2, $3)`
-
-	args = []any{user.User.ID, user.AuthProvider.Provider, user.AuthProvider.ProviderID}
-	_, err := u.db.ExecContext(ctx, query, args...)
-	return err
+	return user, nil
 }
