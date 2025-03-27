@@ -38,7 +38,7 @@ func (u UserModel) GetByEmail(email string) (User, error) {
 	query := `
 		SELECT id, name, email, email_verified, password_hash, avatar_url, created_at
 		FROM users
-		WHERE id = $1`
+		WHERE id = $1 AND password_hash IS NOT NULL`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -50,7 +50,6 @@ func (u UserModel) GetByEmail(email string) (User, error) {
 		&user.Email,
 		&user.EmailVerified,
 		&user.Password.Hash,
-		&user.AvatarURL,
 		&user.AvatarURL,
 		&user.CreatedAt,
 	)
