@@ -93,14 +93,9 @@ func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	v := validator.New()
-	v.Check(input.Name != "", "name", "must be provided")
-	v.Check(len(input.Name) <= 500, "name", "must not be more than 500 bytes long")
-	v.Check(input.Email != "", "email", "must be provided")
-	v.Check(validator.Matches(input.Email, validator.EmailRX), "email", "must be a valid email address")
-	v.Check(input.Password != "", "password", "must be provided")
-	v.Check(len(input.Password) >= 8, "password", "must be at least 8 bytes long")
-	v.Check(len(input.Password) <= 72, "password", "must not be more than 72 bytes long")
-
+	data.ValidateName(v, input.Name)
+	data.ValidateEmail(v, input.Email)
+	data.ValidatePlainPassword(v, input.Password)
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
@@ -138,5 +133,48 @@ func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 
+	if err := app.readJSON(w, r, &input); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	data.ValidateEmail(v, input.Email)
+	data.ValidatePlainPassword(v, input.Password)
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	user, err := app.models.Users.GetByEmail(input.Email)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.emailAddressNotFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	ok, err := user.Credential.Password.Matches(input.Password)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if !ok {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	data := envelope{"user": user.User}
+	if err = app.writeJSON(w, http.StatusOK, data, nil); err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
