@@ -8,13 +8,29 @@ import (
 )
 
 type User struct {
-	ID            int64     `json:"id"`
-	Name          string    `json:"name"`
-	Email         string    `json:"email"`
-	Password      password  `json:"-"`
-	EmailVerified bool      `json:"email_verified"`
-	AvatarURL     string    `json:"avatar_url,omitempty"`
-	CreatedAt     time.Time `json:"-"`
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	AvatarURL string    `json:"avatar_url,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type UserWithCredential struct {
+	User       User
+	Credential UserCredential
+}
+
+type UserCredential struct {
+	UserID   int64
+	Email    string
+	password password
+}
+
+type UserAuthProvider struct {
+	UserID     int64
+	Email      string
+	Provider   string
+	ProviderID string
 }
 
 type password struct {
