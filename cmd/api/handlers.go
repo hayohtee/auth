@@ -10,7 +10,7 @@ import (
 )
 
 func (app *application) signUpWithGoogle(w http.ResponseWriter, r *http.Request) {
-	token, err := app.stateTokenModel.New(2 * time.Hour)
+	token, err := app.models.Tokens.New(2 * time.Hour)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -74,4 +74,12 @@ func (app *application) signUpWithGoogleCallback(w http.ResponseWriter, r *http.
 		return
 	}
 	w.Write(js)
+}
+
+func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request) {
+
 }
