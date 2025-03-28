@@ -32,7 +32,7 @@ func (u UserModel) Insert(user *UserWithCredential) error {
 	err := u.db.QueryRowContext(ctx, query, args...).Scan(&user.User.ID, &user.User.Email, &user.User.CreatedAt)
 	if err != nil {
 		switch {
-		case err.Error() == `pq: duplicate key value violates unique constraint "user_credentials_email_key"`:
+		case strings.Contains(err.Error(), `duplicate key value violates unique constraint "user_credentials_email_key"`):
 			return ErrDuplicateEmail
 		default:
 			return err
