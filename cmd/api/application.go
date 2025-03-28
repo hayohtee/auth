@@ -3,8 +3,8 @@ package main
 import "github.com/hayohtee/auth/internal/data"
 
 type application struct {
-	config          config
-	stateTokenModel *data.StateTokenModel
+	config config
+	models data.Models
 }
 
 type config struct {
