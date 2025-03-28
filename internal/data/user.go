@@ -23,7 +23,7 @@ type UserWithCredential struct {
 type UserCredential struct {
 	UserID   int64
 	Email    string
-	password password
+	Password password
 }
 
 type UserAuthProvider struct {

@@ -25,7 +25,7 @@ func (u UserModel) Insert(user *UserWithCredential) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	args := []any{user.User.Name, user.Credential.Email, user.Credential.password.Hash}
+	args := []any{user.User.Name, user.Credential.Email, user.Credential.Password.Hash}
 	err := u.db.QueryRowContext(ctx, query, args...).Scan(&user.User.ID, &user.User.Email, &user.User.CreatedAt)
 	if err != nil {
 		switch {
