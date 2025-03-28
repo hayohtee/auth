@@ -11,12 +11,6 @@ type UserModel struct {
 	db *sql.DB
 }
 
-func NewUserModel(db *sql.DB) *UserModel {
-	return &UserModel{
-		db: db,
-	}
-}
-
 func (u UserModel) Insert(user *User) error {
 	query := `
 		INSERT INTO users(name, email, email_verified, password_hash)
