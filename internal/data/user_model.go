@@ -16,11 +16,13 @@ func (u UserModel) Insert(user *UserWithCredential) error {
 			INSERT INTO users(name)
 			VALUES($1)
 			RETURNING id, created_at
+		), inserted_credentials AS (
+			INSERT INTO user_credentials(user_id, email, password_hash)
+			SELECT id, $2, $3 FROM new_user
+			RETURNING email
 		)
-		INSERT INTO user_credentials(user_id, email, password_hash)
-		SELECT n.id, $2, $3 FROM n new_user
-		RETURNING n.id, email, n.created_at
-		`
+		SELECT new_user.id, inserted_credentials.email, new_user.created_at
+	 	FROM new_user, inserted_credentials`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
