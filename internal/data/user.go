@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/hayohtee/auth/internal/validator"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -58,4 +59,20 @@ func (p *password) Matches(plainTextPassword string) (bool, error) {
 		}
 	}
 	return true, nil
+}
+
+func ValidateEmail(v *validator.Validator, email string) {
+	v.Check(email != "", "email", "must be provided")
+	v.Check(validator.Matches(email, validator.EmailRX), "email", "must be a valid email address")
+}
+
+func ValidatePlainPassword(v *validator.Validator, plainPassword string) {
+	v.Check(plainPassword != "", "password", "must be provided")
+	v.Check(len(plainPassword) >= 8, "password", "must be at least 8 bytes long")
+	v.Check(len(plainPassword) <= 72, "password", "must not be more than 72 bytes long")
+}
+
+func ValidateName(v *validator.Validator, name string) {
+	v.Check(name != "", "name", "must be provided")
+	v.Check(len(name) <= 500, "name", "must not be more than 500 bytes long")
 }

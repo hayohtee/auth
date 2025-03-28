@@ -93,14 +93,9 @@ func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	v := validator.New()
-	v.Check(input.Name != "", "name", "must be provided")
-	v.Check(len(input.Name) <= 500, "name", "must not be more than 500 bytes long")
-	v.Check(input.Email != "", "email", "must be provided")
-	v.Check(validator.Matches(input.Email, validator.EmailRX), "email", "must be a valid email address")
-	v.Check(input.Password != "", "password", "must be provided")
-	v.Check(len(input.Password) >= 8, "password", "must be at least 8 bytes long")
-	v.Check(len(input.Password) <= 72, "password", "must not be more than 72 bytes long")
-
+	data.ValidateName(v, input.Name)
+	data.ValidateEmail(v, input.Email)
+	data.ValidatePlainPassword(v, input.Password)
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
