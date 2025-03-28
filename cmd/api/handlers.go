@@ -1,12 +1,16 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/hayohtee/auth/internal/data"
+	"github.com/hayohtee/auth/internal/validator"
 )
 
 func (app *application) signUpWithGoogle(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +81,60 @@ func (app *application) signUpWithGoogleCallback(w http.ResponseWriter, r *http.
 }
 
 func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 
+	if err := app.readJSON(w, r, &input); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	v.Check(input.Name != "", "name", "must be provided")
+	v.Check(len(input.Name) <= 500, "name", "must not be more than 500 bytes long")
+	v.Check(input.Email != "", "email", "must be provided")
+	v.Check(validator.Matches(input.Email, validator.EmailRX), "email", "must be a valid email address")
+	v.Check(input.Password != "", "password", "must be provided")
+	v.Check(len(input.Password) >= 8, "password", "must be at least 8 bytes long")
+	v.Check(len(input.Password) <= 72, "password", "must not be more than 72 bytes long")
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	user := data.UserWithCredential{
+		User: data.User{
+			Name: input.Name,
+		},
+		Credential: data.UserCredential{
+			Email: input.Email,
+		},
+	}
+
+	if err := user.Credential.Password.Set(input.Password); err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if err := app.models.Users.Insert(&user); err != nil {
+		switch {
+		case errors.Is(err, data.ErrDuplicateEmail):
+			v.AddError("email", "a user with this email already exist")
+			app.failedValidationResponse(w, r, v.Errors)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	data := envelope{"user": user.User}
+	if err := app.writeJSON(w, http.StatusCreated, data, nil); err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request) {
