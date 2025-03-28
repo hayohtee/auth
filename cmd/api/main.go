@@ -49,8 +49,8 @@ func main() {
 	}
 
 	app := application{
-		config:          cfg,
-		stateTokenModel: data.NewStateTokenModel(db),
+		config: cfg,
+		models: data.NewModels(db),
 	}
 
 	logger.Info("starting server", slog.String("addr", fmt.Sprintf(":%d", cfg.port)))
