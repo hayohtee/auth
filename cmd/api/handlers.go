@@ -133,5 +133,48 @@ func (app *application) signUpUserHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) loginUserHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 
+	if err := app.readJSON(w, r, &input); err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	data.ValidateEmail(v, input.Email)
+	data.ValidatePlainPassword(v, input.Password)
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	user, err := app.models.Users.GetByEmail(input.Email)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.emailAddressNotFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	ok, err := user.Credential.Password.Matches(input.Password)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if !ok {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	data := envelope{"user": user.User}
+	if err = app.writeJSON(w, http.StatusOK, data, nil); err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
