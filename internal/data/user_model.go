@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -38,4 +39,36 @@ func (u UserModel) Insert(user *UserWithCredential) error {
 		}
 	}
 	return nil
+}
+
+func (u UserModel) GetByEmail(email string) (UserWithCredential, error) {
+	query := `
+		SELECT u.id, u.name, uwc.email, uwc.password_hash, u.avatar_url, u.created_at
+		FROM users u
+		JOIN user_credentials uwc ON u.id = uwc.user_id
+		WHERE uwc.email = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var user UserWithCredential
+	err := u.db.QueryRowContext(ctx, query, email).Scan(
+		&user.User.ID,
+		&user.User.Name,
+		&user.User.Email,
+		&user.Credential.Password.Hash,
+		&user.User.AvatarURL,
+		&user.User.CreatedAt,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return UserWithCredential{}, ErrRecordNotFound
+		default:
+			return UserWithCredential{}, err
+		}
+	}
+
+	return user, nil
 }
